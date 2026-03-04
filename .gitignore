@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# Maven
+target/
+pom.xml.versionsBackup
+
+# IDE
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+.vscode/
+
+# Vaadin generated (se regeneran al compilar)
+src/main/frontend/generated/
+src/main/bundles/
+node_modules/
+
+# Vaadin dev files
+package-lock.json
+pnpm-lock.yaml
+tsconfig.json
+types.d.ts
+vite.config.ts
+vite.generated.ts
+
+# Archive files
+*.zip
