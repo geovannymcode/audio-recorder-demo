@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.3</version>
+        <version>4.1.2</version>
     </parent>
 
     <groupId>com.geovannymcode</groupId>
@@ -17,17 +17,10 @@
     <description>Demo project that consumes the Audio Recorder addon with OpenAI Whisper</description>
 
     <properties>
-        <java.version>21</java.version>
-        <vaadin.version>24.6.5</vaadin.version>
-        <spring-ai.version>1.0.0</spring-ai.version>
+        <java.version>25</java.version>
+        <vaadin.version>25.3.5</vaadin.version>
+        <spring-ai.version>2.0.1</spring-ai.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>vaadin-addons</id>
-            <url>https://maven.vaadin.com/vaadin-addons</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -55,12 +48,11 @@
             <artifactId>vaadin-spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- ═══ THE ADDON — installed from your local Maven repo ═══ -->
-        <!-- First run: cd vaadin-audio-recorder && mvn clean install -->
+        <!-- Install the add-on from source if it isn't in your Maven repository. -->
         <dependency>
             <groupId>org.vaadin.addons.audiorecorder</groupId>
             <artifactId>audio-recorder</artifactId>
-            <version>0.0.1</version>
+            <version>0.2.0</version>
         </dependency>
 
         <!-- ═══ Spring AI — OpenAI (Whisper transcription) ═══ -->
@@ -84,11 +76,44 @@
                     <execution>
                         <goals>
                             <goal>prepare-frontend</goal>
-                            <goal>build-frontend</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-dev</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>production</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.vaadin</groupId>
+                        <artifactId>vaadin-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>production-frontend</id>
+                                <goals>
+                                    <goal>build-frontend</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

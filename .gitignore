@@ -14,11 +14,13 @@ pom.xml.versionsBackup
 .vscode/
 
 # Vaadin generated (se regeneran al compilar)
+src/main/frontend/index.html
 src/main/frontend/generated/
 src/main/bundles/
 node_modules/
 
 # Vaadin dev files
+package.json
 package-lock.json
 pnpm-lock.yaml
 tsconfig.json
