@@ -1,81 +1,50 @@
 # 🎙️ Audio Recorder Demo — OpenAI Whisper
 
-Demo project that **consumes** the [Audio Recorder addon](https://github.com/geovannymcode/vaadin-audio-recorder) as a Maven dependency and connects it to OpenAI Whisper via Spring AI.
+A Vaadin Flow app that uses [Audio Recorder 0.2.0](https://github.com/geovannymcode/vaadin-audio-recorder/tree/7539578)
+with Vaadin 25.3.5, Spring Boot 4.1 and Spring AI 2.0.
 
-## Prerequisites
+Record with your microphone or select an existing audio file with **Upload**.
+Both paths send the audio to Whisper and display the transcription. Use **Play**
+to listen to the last audio, and try switching between bars and waveform or
+choosing one of the three recorder themes.
 
-- Java 21
-- Maven 3.9+
-- OpenAI API Key (with Whisper access)
-- The addon installed in your local Maven repo
+## Run locally
 
-## Setup
+You'll need JDK 25, Maven 3.9+, Node.js 24+ with npm 11.3+, and an OpenAI API key
+with access to `whisper-1`. Use a current browser and grant microphone permission
+to record on localhost.
 
-### Step 1 — Install the addon locally
-
-```bash
-# Go to your addon project (separate repo)
-cd vaadin-audio-recorder
-mvn clean install -DskipTests
-```
-
-This puts `audio-recorder-0.0.1.jar` in `~/.m2/repository/`.
-
-### Step 2 — Set your OpenAI API Key
+Install the add-on into your local Maven repository if it isn't already available.
+The upstream project documents 0.2.0 as a source build:
 
 ```bash
-export OPENAI_API_KEY=sk-your-key-here
+git clone https://github.com/geovannymcode/vaadin-audio-recorder.git
+git -C vaadin-audio-recorder checkout 7539578
+mvn -f vaadin-audio-recorder/pom.xml clean install
 ```
 
-### Step 3 — Run this demo
+From this demo's directory:
 
 ```bash
-cd audio-recorder-demo
-mvn spring-boot:run
+export OPENAI_API_KEY=your-api-key
+mvn clean spring-boot:run
 ```
 
-Open http://localhost:8080
+Open [localhost:8081](http://localhost:8081). Try recording a short phrase in
+Spanish, then upload a small WAV, MP3 or WebM file. Recordings stop after 120
+seconds, and the demo accepts audio up to 25 MB for transcription.
 
-### What you'll see
+## Build for production
 
-1. The **AudioRecorder** component with waveform visualization (from the addon)
-2. Click **REC** → speak → click **STOP**
-3. Audio bytes go to **OpenAI Whisper** via Spring AI
-4. Transcription appears in the TextArea
-
-## Project structure
-
-```
-audio-recorder-demo/              ← THIS repo (Spring Boot app)
-├── pom.xml                       ← depends on the addon + spring-ai-openai
-├── src/main/java/com/geovannymcode/demo/
-│   ├── AudioRecorderDemoApplication.java
-│   ├── TranscriptionService.java  ← calls OpenAI Whisper
-│   └── MainView.java             ← Vaadin view using the addon
-└── src/main/resources/
-    └── application.properties     ← API key + Whisper config
-
-vaadin-audio-recorder/             ← SEPARATE repo (the addon)
-├── pom.xml
-├── src/main/java/.../AudioRecorder.java
-└── src/main/resources/.../audio-recorder-element.ts
+```bash
+mvn -Pproduction clean verify
+java -jar target/audio-recorder-demo-1.0.0.jar
 ```
 
-## Switching AI provider
+The production profile bundles the add-on's frontend with the application.
+The default Maven profile enables Vaadin's development server.
 
-Only `TranscriptionService.java` changes. The addon doesn't care:
-
-```java
-// Gemini
-return geminiClient.transcribe(audioBytes);
-
-// Anthropic
-return claudeClient.processAudio(audioBytes);
-
-// Deepgram
-return deepgram.transcribe(audioBytes);
-
-// No AI — save to file
-Files.write(Path.of("recording.webm"), audioBytes);
-return "Saved!";
-```
+`MainView.java` wires the component's `AudioHandler` to `TranscriptionService.java`.
+The service passes the audio to Spring AI with a filename matching its MIME type.
+The transcription model, language and response format are configured in
+`application.properties`.
