@@ -1,10 +1,14 @@
 package com.geovannymcode.demo;
 
+import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AudioRecorderDemoApplication {
+@StyleSheet(Lumo.STYLESHEET)
+public class AudioRecorderDemoApplication implements AppShellConfigurator {
 
     public static void main(String[] args) {
         SpringApplication.run(AudioRecorderDemoApplication.class, args);
